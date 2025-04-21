@@ -12,10 +12,13 @@ const variants = ref([
   { id: 2234, color: 'green' },
   { id: 2235, color: 'blue' },
 ])
+
+const cart = ref(0)
 </script>
   
 <template>
   <div class="nav-bar"></div>
+  <div class="cart">Cart({{ cart }})</div>
   <div class="product-display">
     <div class="product-container">
       <div class="product-image">    
@@ -28,7 +31,13 @@ const variants = ref([
         <ul>
           <li v-for="detail in details">{{ detail }}</li>
         </ul>
-        <div v-for="variant in variants" :key="variant.id">{{ variant.color }}</div>
+        <div 
+          v-for="variant in variants" 
+          :key="variant.id"
+        >
+          {{ variant.color }}
+        </div>
+        <button class="button">Add to Cart</button>
       </div>
     </div>
   </div>
