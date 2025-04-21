@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import socksGreenImage from './assets/images/socks_green.jpeg'
+import socksBlueImage from './assets/images/socks_blue.jpeg'
 
 const product = ref('Socks')
 const image = ref(socksGreenImage)
@@ -9,8 +10,8 @@ const inStock = true
 const details = ref(['50% cotton', '30% wool', '20% polyester'])
 
 const variants = ref([
-  { id: 2234, color: 'green' },
-  { id: 2235, color: 'blue' },
+  { id: 2234, color: 'green', image: socksGreenImage },
+  { id: 2235, color: 'blue', image: socksBlueImage },
 ])
 
 const cart = ref(0)
