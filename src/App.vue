@@ -6,6 +6,8 @@ const product = ref('Socks')
 const image = ref(socksGreenImage)
 const inStock = true
 
+const details = ref(['50% cotton', '30% wool', '20% polyester'])
+
 </script>
   
 <template>
