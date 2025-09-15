@@ -10,6 +10,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['add-to-cart'], ['remove-from-cart'])
+
 const product = ref('Socks')
 const brand = ref('Vue Mastery')
 
@@ -43,7 +45,13 @@ const shipping = computed(() => {
   }
 })
 
-const addToCart = () => cart.value += 1
+const addToCart = () => {
+    emit('add-to-cart', variants.value[selectedVariant.value].id)
+}
+
+const removeFromCart = () => {
+    emit('remove-from-cart', variants.value[selectedVariant.value].id)
+}
 
 const updateVariant = (index) => {
   selectedVariant.value = index
@@ -79,6 +87,12 @@ const updateVariant = (index) => {
           v-on:click="addToCart"
         >
           Add to cart
+        </button>
+        <button
+            class="button"
+            v-on:click="removeFromCart"
+        >
+            Remove
         </button>
       </div>
     </div>
