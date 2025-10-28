@@ -1,17 +1,17 @@
 <script setup>
-import { ref } from 'vue'
-import ProductDisplay from '@/components/ProductDisplay.vue'
+import { ref } from "vue"
+const product = ref('Socks')
+const description = ref('Warm, Cozy and Beautiful')
 
-const cart = ref([])
-const premium = ref(true)
-
-const updateCart = (id) => {
-  cart.value.push(id)
-}
 </script>
-  
+
 <template>
-  <div class="nav-bar"></div>
-  <div class="cart">Cart({{ cart.length }})</div>
-  <ProductDisplay :premium="premium" @add-to-cart="updateCart"></ProductDisplay>
+  <div class="product-display">
+    <div class="product-container">
+      <div class="product-info">
+        <h1>{{ product }}</h1>
+        <p>{{ description }}</p>
+      </div>
+    </div>
+  </div>
 </template>
