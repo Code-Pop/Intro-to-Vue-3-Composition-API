@@ -1,0 +1,284 @@
+<script setup>
+// Import `ref` to create reactive variables
+import { ref } from 'vue'
+
+// Import images
+import socksGreenImage from '../assets/images/socks_green.jpeg'
+import socksBlueImage from '../assets/images/socks_blue.jpeg'
+
+// Import child components
+import ProductDetails from "@/components/ProductDetails.vue";
+import ReviewForm from "@/components/ReviewForm.vue";
+
+// Reactive product name using ref()
+const product = ref('Socks')
+
+// Reactive array of product details
+const details = ref(['50% cotton', '30% wool', '20% polyester'])
+
+// Reactive list of variants
+const variants = ref([
+  { id: 0, color: 'green', image: socksGreenImage, quantity: 10, onSale: true},
+  { id: 1, color: 'blue',  image: socksBlueImage, quantity: 20, onSale: false},
+])
+
+// More reactive values
+const brand = ref('CPNV')
+const selectedVariant = ref(0)
+const shipping = ref(null)
+
+// Define incoming props using <script setup>
+const props = defineProps({
+  premium: {
+    type: Boolean,
+    required: true
+  }
+})
+
+// Define events emitted by the component
+// ⚠️ There is a syntax error in your original code.
+// Correct usage: one array listing all emitted events.
+const emit = defineEmits(['add-to-cart', 'remove-from-cart'])
+
+// Returns "est en action!" if the selected variant is on sale
+function sale(){
+  if (variants.value[selectedVariant.value].onSale) {
+    return " est en action !"
+  }
+}
+
+// Returns current variant image
+function image() {
+  return variants.value[selectedVariant.value].image
+}
+
+// Checks if quantity > 0
+function inStock() {
+  return variants.value[selectedVariant.value].quantity > 0
+}
+
+// Computes full product name (brand + product)
+function brandedProduct() {
+  return brand.value + ' ' + product.value
+}
+
+// Updates selected index when user hovers over variant color
+function updateVariant(variantId) {
+  selectedVariant.value = variantId
+}
+
+// Computes shipping cost based on `premium` prop
+function shippingCost(){
+  if (props.premium){
+    shipping.value = 'Free'
+  } else {
+    shipping.value = 5.99
+  }
+  return shipping.value
+}
+
+// Emit event to parent to add current variant to cart
+function addToCart() {
+  emit('add-to-cart', variants.value[selectedVariant.value].id)
+}
+
+// Emit event to parent to remove current variant from cart
+function removeFromCart() {
+  emit('remove-from-cart', variants.value[selectedVariant.value].id)
+}
+</script>
+<template>
+  <div class="product-display">
+    <div class="product-container">
+
+      <!-- PRODUCT IMAGE ---------------------------------------------------->
+      <div class="product-image">
+        <!-- If in stock: normal image -->
+        <img v-if="inStock()" :src="image()" alt="Socks"/>
+
+        <!-- If out of stock: add special CSS class -->
+        <img v-else :src="image()" alt="Socks" class="out-of-stock-img"/>
+      </div>
+
+      <!-- PRODUCT INFO ----------------------------------------------------->
+      <div class="product-info">
+
+        <!-- Brand + Product name -->
+        <h1>{{ brandedProduct() }}</h1>
+
+        <!-- On sale text -->
+        <p>{{ sale() }}</p>
+
+        <!-- Stock status -->
+        <p v-if="inStock()">In Stock</p>
+        <p v-else>Out of Stock</p>
+
+        <!-- Child component receiving props -->
+        <ProductDetails :details="details"></ProductDetails>
+
+        <!-- Shipping cost text -->
+        <p>{{ shippingCost() }}</p>
+
+        <!-- VARIANT COLOR SELECTOR ------------------------------------------>
+        <div class="color-circle"
+             v-for="(variant, index) in variants"
+             :key="variant.id"
+             :style="{ backgroundColor: variant.color }"
+             @mouseover="updateVariant(index)"
+        >
+        </div>
+
+        <!-- Add to cart button -->
+        <button v-if="inStock()" @click="addToCart()">Ajouter</button>
+
+        <!-- Disabled add button -->
+        <button v-else class="disabledButton">Ajouter</button>
+
+        <!-- Remove from cart button -->
+        <button @click="removeFromCart()">Enlever du panier</button>
+
+        <!-- Review form (child component) -->
+        <ReviewForm :form="form" @on-submit="onSubmit"></ReviewForm>
+
+        <!-- To display user review (probably missing a ref in script) -->
+        <p>{{ productReview }}</p>
+
+      </div>
+    </div>
+  </div>
+</template>
+
+🔑 Key Vue Concepts Explained
+1. Reactivity — ref()
+
+ref() creates a reactive variable:
+
+const product = ref('Socks')
+
+
+You access/update it with .value inside <script setup> but without .value in the template.
+
+2. Props — defineProps()
+
+Used in <script setup> to declare what data the parent passes to the component:
+
+const props = defineProps({
+  premium: Boolean
+})
+
+3. Events — defineEmits()
+
+Defines events the component can send to parent:
+
+const emit = defineEmits(['add-to-cart', 'remove-from-cart'])
+
+
+Then you call them like:
+
+emit('add-to-cart', variantId)
+
+4. Computed logic inside functions
+
+In Composition API, instead of computed properties, you can use functions:
+
+function inStock() { ... }
+
+
+These can be called directly in the template.
+
+5. v-for rendering
+
+Loops over variants:
+
+v-for="(variant, index) in variants"
+
+6. Dynamic styling
+
+Binding an object to :style:
+
+:style="{ backgroundColor: variant.color }"
+
+7. Child components
+
+You pass data via props:
+
+<ProductDetails :details="details"/>
+
+
+And listen to emitted events:
+
+<ReviewForm @on-submit="onSubmit"/>
+
+
+8. other
+Event handling
+<button @click="addToCart">Add</button>
+
+Conditional rendering
+<p v-if="inStock">In Stock</p>
+
+Binding
+<img :src="image" :alt="title">
+
+List rendering
+<li v-for="item in items" :key="item.id">{{ item.name }}</li>
+
+Navigation:
+<router-link to="/products">Products</router-link>
+
+4. Lifecycle Hooks
+
+Used in <script setup> by directly importing:
+
+import { onMounted, onUpdated, onUnmounted } from 'vue'
+
+onMounted(() => console.log("Component mounted"))
+onUpdated(() => console.log("DOM updated"))
+onUnmounted(() => console.log("Component removed"))
+
+
+Most used:
+
+onMounted() → fetch data, init components
+
+onUnmounted() → cleanup
+
+onUpdated() → DOM-related updates
+
+6. Composables (Reusable Functions)
+
+Reusable logic extracted into functions that use Vue reactivity.
+
+useCart.js:
+
+import { ref } from "vue"
+
+export function useCart() {
+  const cart = ref([])
+
+  function add(item) {
+    cart.value.push(item)
+  }
+
+  return { cart, add }
+}
+const { cart, add } = useCart()
+
+8. Routing (Vue Router)
+import { createRouter, createWebHistory } from "vue-router"
+
+const routes = [
+  { path: '/products', component: Products },
+  { path: '/product/:id', component: ProductDetails }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+10. Handling Forms (v-model)
+
+Two-way binding:
+
+<input v-model="name" />
